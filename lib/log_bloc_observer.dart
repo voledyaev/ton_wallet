@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+
 import 'logger.dart';
 
 class LogBlocObserver extends BlocObserver {

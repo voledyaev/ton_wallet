@@ -1,0 +1,72 @@
+import 'package:injectable/injectable.dart';
+import 'package:ton_core/ton_core.dart';
+
+import '../../domain/repositories/wallet_info_repository.dart';
+import '../../logger.dart';
+import '../dto/account_dto.dart';
+import '../dto/transaction_dto.dart';
+import '../sources/local/hive_source.dart';
+
+@lazySingleton
+class WalletInfoRepositoryImpl implements WalletInfoRepository {
+  final TonCore _core;
+
+  HiveSource _hiveSource;
+
+  WalletInfoRepositoryImpl(this._hiveSource) : _core = TonCore.instance();
+
+  Stream<Account> getAccount({
+    required int wc,
+    required String address,
+  }) async* {
+    final cached = await _hiveSource.getAccount(address);
+    if (cached != null) {
+      yield cached.toDomain();
+    }
+
+    try {
+      final account = await _core.getAccount(
+        wc: wc,
+        address: address,
+      );
+
+      yield account;
+
+      _hiveSource.cacheAccount(
+        address: address,
+        account: account.fromDomain(),
+      );
+    } on NativeException catch (err, st) {
+      logger.e("getTransactions", err, st);
+      rethrow;
+    }
+  }
+
+  Stream<List<Transaction>> getTransactions({
+    required int wc,
+    required String address,
+    required int lastTransactionLt,
+    required int limit,
+  }) async* {
+    final cached = await _hiveSource.getTransactions();
+    if (cached.any((element) => element.lt == lastTransactionLt)) {
+      yield cached.map((e) => e.toDomain()).toList();
+    }
+
+    try {
+      final transactions = await _core.getTransactions(
+        wc: wc,
+        address: address,
+        lastTransactionLt: lastTransactionLt,
+        limit: limit,
+      );
+
+      yield transactions;
+
+      _hiveSource.cacheTransactions(transactions.map((e) => e.fromDomain()).toList());
+    } on NativeException catch (err, st) {
+      logger.e("getTransactions", err, st);
+      rethrow;
+    }
+  }
+}
