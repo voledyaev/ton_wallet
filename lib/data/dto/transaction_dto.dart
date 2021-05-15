@@ -9,16 +9,12 @@ part 'transaction_dto.g.dart';
 class TransactionDto {
   @HiveField(0)
   String id;
-
   @HiveField(1)
   int? lt;
-
   @HiveField(2)
   int? prevTransLt;
-
   @HiveField(3)
   TransactionMessageDto inMessage;
-
   @HiveField(4)
   List<TransactionMessageDto> outMessages;
 

@@ -6,11 +6,10 @@ import '../../logger.dart';
 import '../dto/keypair_dto.dart';
 import '../sources/local/hive_source.dart';
 
-@lazySingleton
+@LazySingleton(as: WalletAuthRepository)
 class WalletAuthRepositoryImpl implements WalletAuthRepository {
   final TonCore _core;
-
-  HiveSource _hiveSource;
+  final HiveSource _hiveSource;
 
   WalletAuthRepositoryImpl(this._hiveSource) : _core = TonCore.instance();
 
@@ -42,7 +41,7 @@ class WalletAuthRepositoryImpl implements WalletAuthRepository {
 
       return mnemonic.split(" ").toList();
     } on NativeException catch (err, st) {
-      logger.e("getTransactions", err, st);
+      logger.e("generateMnemonic", err, st);
       rethrow;
     }
   }
@@ -55,7 +54,7 @@ class WalletAuthRepositoryImpl implements WalletAuthRepository {
 
       return keyPair;
     } on NativeException catch (err, st) {
-      logger.e("getTransactions", err, st);
+      logger.e("generateKeyPairFromMnemonic", err, st);
       rethrow;
     }
   }
@@ -75,7 +74,7 @@ class WalletAuthRepositoryImpl implements WalletAuthRepository {
 
       return address;
     } on NativeException catch (err, st) {
-      logger.e("getTransactions", err, st);
+      logger.e("generateAddress", err, st);
       rethrow;
     }
   }

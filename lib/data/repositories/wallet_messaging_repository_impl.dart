@@ -6,7 +6,7 @@ import 'package:ton_core/ton_core.dart';
 import '../../domain/repositories/wallet_messaging_repository.dart';
 import '../../logger.dart';
 
-@lazySingleton
+@LazySingleton(as: WalletMessagingRepository)
 class WalletMessagingRepositoryImpl implements WalletMessagingRepository {
   final TonCore _core;
 
@@ -33,7 +33,7 @@ class WalletMessagingRepositoryImpl implements WalletMessagingRepository {
 
       return message;
     } on NativeException catch (err, st) {
-      logger.e("getTransactions", err, st);
+      logger.e("generateDeployMessage", err, st);
       rethrow;
     }
   }
@@ -68,7 +68,7 @@ class WalletMessagingRepositoryImpl implements WalletMessagingRepository {
 
       return message;
     } on NativeException catch (err, st) {
-      logger.e("getTransactions", err, st);
+      logger.e("generateSubmitTransactionMessage", err, st);
       rethrow;
     }
   }
@@ -87,7 +87,7 @@ class WalletMessagingRepositoryImpl implements WalletMessagingRepository {
 
       return fees;
     } on NativeException catch (err, st) {
-      logger.e("getTransactions", err, st);
+      logger.e("estimateFees", err, st);
       rethrow;
     }
   }
@@ -106,7 +106,7 @@ class WalletMessagingRepositoryImpl implements WalletMessagingRepository {
 
       return realFees;
     } on NativeException catch (err, st) {
-      logger.e("getTransactions", err, st);
+      logger.e("sendMessage", err, st);
       rethrow;
     }
   }

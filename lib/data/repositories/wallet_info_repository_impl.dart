@@ -7,15 +7,14 @@ import '../dto/account_dto.dart';
 import '../dto/transaction_dto.dart';
 import '../sources/local/hive_source.dart';
 
-@lazySingleton
+@LazySingleton(as: WalletInfoRepository)
 class WalletInfoRepositoryImpl implements WalletInfoRepository {
   final TonCore _core;
-
-  HiveSource _hiveSource;
+  final HiveSource _hiveSource;
 
   WalletInfoRepositoryImpl(this._hiveSource) : _core = TonCore.instance();
 
-  Stream<Account> getAccount({
+  Stream<Account> getAccountStream({
     required int wc,
     required String address,
   }) async* {
@@ -37,12 +36,12 @@ class WalletInfoRepositoryImpl implements WalletInfoRepository {
         account: account.fromDomain(),
       );
     } on NativeException catch (err, st) {
-      logger.e("getTransactions", err, st);
+      logger.e("getAccountStream", err, st);
       rethrow;
     }
   }
 
-  Stream<List<Transaction>> getTransactions({
+  Stream<List<Transaction>> getTransactionsStream({
     required int wc,
     required String address,
     required int lastTransactionLt,
@@ -65,7 +64,24 @@ class WalletInfoRepositoryImpl implements WalletInfoRepository {
 
       _hiveSource.cacheTransactions(transactions.map((e) => e.fromDomain()).toList());
     } on NativeException catch (err, st) {
-      logger.e("getTransactions", err, st);
+      logger.e("getTransactionsStream", err, st);
+      rethrow;
+    }
+  }
+
+  Future<Account> getAccount({
+    required int wc,
+    required String address,
+  }) async {
+    try {
+      final account = await _core.getAccount(
+        wc: wc,
+        address: address,
+      );
+
+      return account;
+    } on NativeException catch (err, st) {
+      logger.e("getAccount", err, st);
       rethrow;
     }
   }

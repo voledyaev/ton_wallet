@@ -7,16 +7,12 @@ part 'account_dto.g.dart';
 class AccountDto {
   @HiveField(0)
   final String accTypeName;
-
   @HiveField(1)
   int? balance;
-
   @HiveField(2)
   int? lastPaid;
-
   @HiveField(3)
   int? lastTransLt;
-
   @HiveField(4)
   String? data;
 

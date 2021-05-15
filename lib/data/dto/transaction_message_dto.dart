@@ -7,13 +7,10 @@ part 'transaction_message_dto.g.dart';
 class TransactionMessageDto {
   @HiveField(0)
   String src;
-
   @HiveField(1)
   String dst;
-
   @HiveField(2)
   int? value;
-
   @HiveField(3)
   int? fwdFee;
 

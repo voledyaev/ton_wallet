@@ -12,8 +12,7 @@ import '../../dto/transaction_dto.dart';
 @lazySingleton
 class HiveSource {
   final _key = Uint8List.fromList(List<int>.generate(32, (index) => index + 1));
-
-  final BehaviorSubject<bool> _keysPresenceSubject = BehaviorSubject<bool>();
+  final _keysPresenceSubject = BehaviorSubject<bool>();
 
   @factoryMethod
   static Future<HiveSource> create() async {

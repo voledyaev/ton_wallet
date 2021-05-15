@@ -7,7 +7,6 @@ part 'keypair_dto.g.dart';
 class KeyPairDto {
   @HiveField(0)
   final String public;
-
   @HiveField(1)
   final String secret;
 
