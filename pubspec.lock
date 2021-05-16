@@ -29,6 +29,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.5.0"
+  auto_route:
+    dependency: "direct main"
+    description:
+      name: auto_route
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.0"
+  auto_route_generator:
+    dependency: "direct dev"
+    description:
+      name: auto_route_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   bloc:
     dependency: "direct main"
     description:
@@ -228,6 +242,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  font_awesome_flutter:
+    dependency: "direct main"
+    description:
+      name: font_awesome_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "9.0.0"
   freezed:
     dependency: "direct dev"
     description:
@@ -609,7 +630,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "77418f34ee25e2d672c1d9c49610723d1d7e91f2"
+      resolved-ref: "07e1a84b41a26ed86485b0c6de4b05cda0172a72"
       url: "https://github.com/voledyaev/ton_core.git"
     source: git
     version: "0.0.1"

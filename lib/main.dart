@@ -10,8 +10,9 @@ import 'presentation/application/application.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await configureDependencies();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+  await configureDependencies();
   Bloc.observer = LogBlocObserver();
 
   runApp(Application());

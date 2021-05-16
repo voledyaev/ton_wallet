@@ -14,24 +14,24 @@ import '../repositories/wallet_messaging_repository.dart';
 part 'wallet_messaging_bloc.freezed.dart';
 
 @injectable
-class WalletInfoBloc extends Bloc<WalletInfoEvent, WalletInfoState> {
+class WalletMessagingBloc extends Bloc<WalletMessagingEvent, WalletMessagingState> {
   final WalletMessagingRepository _messagingRepository;
   final WalletAuthRepository _authRepository;
   final WalletInfoRepository _infoRepository;
   final String? _address;
 
-  WalletInfoBloc(
+  WalletMessagingBloc(
     this._messagingRepository,
     this._authRepository,
     this._infoRepository,
     @factoryParam this._address,
-  ) : super(const WalletInfoState.initial());
+  ) : super(const WalletMessagingState.initial());
 
   @override
-  Stream<WalletInfoState> mapEventToState(WalletInfoEvent event) async* {
+  Stream<WalletMessagingState> mapEventToState(WalletMessagingEvent event) async* {
     try {
       if (event is GenerateDeployMessage) {
-        yield const WalletInfoState.loading();
+        yield const WalletMessagingState.loading();
 
         final keyPair = await _authRepository.getWalletKeyPair();
 
@@ -49,16 +49,16 @@ class WalletInfoBloc extends Bloc<WalletInfoEvent, WalletInfoState> {
             message: message,
           );
 
-          yield WalletInfoState.messagePrepared(
+          yield WalletMessagingState.messagePrepared(
             message: message,
             fees: fees,
           );
           return;
         }
 
-        yield const WalletInfoState.error("Unable to generate deploy message");
+        yield const WalletMessagingState.error("Unable to generate deploy message");
       } else if (event is GenerateSubmitTransactionMessage) {
-        yield const WalletInfoState.loading();
+        yield const WalletMessagingState.loading();
 
         final keyPair = await _authRepository.getWalletKeyPair();
 
@@ -90,16 +90,16 @@ class WalletInfoBloc extends Bloc<WalletInfoEvent, WalletInfoState> {
             message: message,
           );
 
-          yield WalletInfoState.messagePrepared(
+          yield WalletMessagingState.messagePrepared(
             message: message,
             fees: fees,
           );
           return;
         }
 
-        yield const WalletInfoState.error("Unable to generate submit transaction message");
+        yield const WalletMessagingState.error("Unable to generate submit transaction message");
       } else if (event is SendMessage) {
-        yield const WalletInfoState.loading();
+        yield const WalletMessagingState.loading();
 
         final fees = await _messagingRepository.sendMessage(
           contractType: kDefaultContractType,
@@ -107,39 +107,39 @@ class WalletInfoBloc extends Bloc<WalletInfoEvent, WalletInfoState> {
           message: event.message,
         );
 
-        yield WalletInfoState.messageSent(fees: fees);
+        yield WalletMessagingState.messageSent(fees: fees);
       }
     } on NativeException catch (err, st) {
       logger.e(err.info, err, st);
-      yield WalletInfoState.error(err.info);
+      yield WalletMessagingState.error(err.info);
     }
   }
 }
 
 @freezed
-class WalletInfoEvent with _$WalletInfoEvent {
-  const factory WalletInfoEvent.generateDeployMessage() = GenerateDeployMessage;
+class WalletMessagingEvent with _$WalletMessagingEvent {
+  const factory WalletMessagingEvent.generateDeployMessage() = GenerateDeployMessage;
 
-  const factory WalletInfoEvent.generateSubmitTransactionMessage({
+  const factory WalletMessagingEvent.generateSubmitTransactionMessage({
     required String destination,
     required int value,
   }) = GenerateSubmitTransactionMessage;
 
-  const factory WalletInfoEvent.sendMessage({required Message message}) = SendMessage;
+  const factory WalletMessagingEvent.sendMessage({required Message message}) = SendMessage;
 }
 
 @freezed
-class WalletInfoState with _$WalletInfoState {
-  const factory WalletInfoState.initial() = Initial;
+class WalletMessagingState with _$WalletMessagingState {
+  const factory WalletMessagingState.initial() = Initial;
 
-  const factory WalletInfoState.loading() = Loading;
+  const factory WalletMessagingState.loading() = Loading;
 
-  const factory WalletInfoState.error(String message) = Error;
+  const factory WalletMessagingState.error(String message) = Error;
 
-  const factory WalletInfoState.messagePrepared({
+  const factory WalletMessagingState.messagePrepared({
     required Message message,
     required int fees,
   }) = MessagePrepared;
 
-  const factory WalletInfoState.messageSent({required int fees}) = MessageSent;
+  const factory WalletMessagingState.messageSent({required int fees}) = MessageSent;
 }

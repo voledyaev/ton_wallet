@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/blocs/auth_bloc.dart';
+import '../router/router.gr.dart';
 
 class ApplicationLifecycleListener extends StatefulWidget {
   final Widget child;
-  final GlobalKey<NavigatorState> navigatorKey;
+  final AppRouter appRouter;
 
   const ApplicationLifecycleListener({
     Key? key,
     required this.child,
-    required this.navigatorKey,
+    required this.appRouter,
   }) : super(key: key);
 
   @override
@@ -28,24 +29,9 @@ class _ApplicationLifecycleListenerState extends State<ApplicationLifecycleListe
 
   BlocListener _getAuthListener(BuildContext context) => BlocListener<AuthBloc, AuthState>(
         listener: (BuildContext context, AuthState state) => state.map(
-          initial: (Initial value) {},
-          authorized: (Authorized value) {},
-          unauthorized: (Unauthorized value) {},
+          initial: (Initial value) => widget.appRouter.replace(LoadingRoute()),
+          authorized: (Authorized value) => widget.appRouter.replace(WalletInfoRouter()),
+          unauthorized: (Unauthorized value) => widget.appRouter.replace(WalletCreationRouter()),
         ),
       );
-
-  Future<void> _wait() async {
-    while (widget.navigatorKey.currentState == null) {
-      await Future.delayed(const Duration(milliseconds: 100));
-    }
-  }
-
-  Future<void> _pushOrigin(Widget screen) async {
-    await _wait();
-    widget.navigatorKey.currentState?.push(
-      MaterialPageRoute(
-        builder: (context) => screen,
-      ),
-    );
-  }
 }
