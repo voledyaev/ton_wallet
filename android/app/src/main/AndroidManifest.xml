@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ton_wallet">
    <application
-        android:label="ton_wallet"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Ton Wallet"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

@@ -25,16 +25,16 @@ class HiveSource {
 
   Stream<bool> get hasKeysStream => _keysPresenceSubject.stream.distinct();
 
-  Future<Box> get _addressBox async => Hive.openBox<String>("address");
+  Future<Box<String>> get _addressBox async => Hive.openBox<String>("address");
 
-  Future<Box> get _keyPairBox async => Hive.openBox<KeyPairDto>(
+  Future<Box<KeyPairDto>> get _keyPairBox async => Hive.openBox<KeyPairDto>(
         "key_pair",
         encryptionCipher: HiveAesCipher(_key),
       );
 
-  Future<Box> get _accountBox async => Hive.openBox<AccountDto>("account");
+  Future<Box<AccountDto>> get _accountBox async => Hive.openBox<AccountDto>("account");
 
-  Future<Box> get _transactionsBox async => Hive.openBox<TransactionDto>("transactions");
+  Future<Box<TransactionDto>> get _transactionsBox async => Hive.openBox<TransactionDto>("transactions");
 
   Future<void> setWalletAddress(String address) async {
     final box = await _addressBox;

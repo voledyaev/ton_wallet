@@ -13,9 +13,9 @@ class WalletSelectionPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 buildGemIcon(),
-                SizedBox(height: 64),
+                const SizedBox(height: 64),
                 buildCreateButton(context),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 buildImportButton(context),
               ],
             ),
@@ -23,14 +23,14 @@ class WalletSelectionPage extends StatelessWidget {
         ),
       );
 
-  FaIcon buildGemIcon() => FaIcon(
+  FaIcon buildGemIcon() => const FaIcon(
         FontAwesomeIcons.gem,
         color: Colors.white,
         size: 120,
       );
 
   ElevatedButton buildCreateButton(BuildContext context) => ElevatedButton(
-        onPressed: () => context.router.push(PhraseOutputRoute()),
+        onPressed: () => context.router.push(const PhraseOutputRoute()),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             vertical: 10,
@@ -44,14 +44,14 @@ class WalletSelectionPage extends StatelessWidget {
       );
 
   TextButton buildImportButton(BuildContext context) => TextButton(
-        onPressed: () => context.router.push(PhraseInputRoute()),
+        onPressed: () => context.router.push(const PhraseInputRoute()),
         child: Text(
           'Import Wallet',
           style: buildTextStyle(),
         ),
       );
 
-  TextStyle buildTextStyle() => TextStyle(
+  TextStyle buildTextStyle() => const TextStyle(
         fontSize: 18,
         color: Colors.white,
       );

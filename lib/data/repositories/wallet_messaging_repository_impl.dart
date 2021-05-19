@@ -12,6 +12,7 @@ class WalletMessagingRepositoryImpl implements WalletMessagingRepository {
 
   WalletMessagingRepositoryImpl() : _core = TonCore.instance();
 
+  @override
   Future<Message> generateDeployMessage({
     required ContractType contractType,
     required int wc,
@@ -38,6 +39,7 @@ class WalletMessagingRepositoryImpl implements WalletMessagingRepository {
     }
   }
 
+  @override
   Future<Message> generateSubmitTransactionMessage({
     required ContractType contractType,
     required int wc,
@@ -73,6 +75,7 @@ class WalletMessagingRepositoryImpl implements WalletMessagingRepository {
     }
   }
 
+  @override
   Future<int> estimateFees({
     required ContractType contractType,
     required int wc,
@@ -92,6 +95,7 @@ class WalletMessagingRepositoryImpl implements WalletMessagingRepository {
     }
   }
 
+  @override
   Future<int> sendMessage({
     required ContractType contractType,
     required int wc,

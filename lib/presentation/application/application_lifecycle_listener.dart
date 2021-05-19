@@ -29,9 +29,9 @@ class _ApplicationLifecycleListenerState extends State<ApplicationLifecycleListe
 
   BlocListener _getAuthListener(BuildContext context) => BlocListener<AuthBloc, AuthState>(
         listener: (BuildContext context, AuthState state) => state.map(
-          initial: (Initial value) => widget.appRouter.replace(LoadingRoute()),
-          authorized: (Authorized value) => widget.appRouter.replace(WalletInfoRouter()),
-          unauthorized: (Unauthorized value) => widget.appRouter.replace(WalletCreationRouter()),
+          initial: (Initial value) => widget.appRouter.replace(const LoadingRoute()),
+          authorized: (Authorized value) => widget.appRouter.replace(const WalletInfoRouter()),
+          unauthorized: (Unauthorized value) => widget.appRouter.replace(const WalletCreationRouter()),
         ),
       );
 }

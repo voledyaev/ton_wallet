@@ -9,6 +9,6 @@ class WalletCreationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocProvider(
         create: (_) => getIt.get<WalletCreationBloc>(),
-        child: AutoRouter(),
+        child: const AutoRouter(),
       );
 }

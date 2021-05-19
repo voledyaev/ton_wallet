@@ -13,28 +13,37 @@ class WalletAuthRepositoryImpl implements WalletAuthRepository {
 
   WalletAuthRepositoryImpl(this._hiveSource) : _core = TonCore.instance();
 
+  @override
   Stream<bool> get hasWalletKeyPairStream => _hiveSource.hasKeysStream;
 
+  @override
   bool? get hasWalletKeyPair => _hiveSource.hasKeys;
 
+  @override
   Future<String?> getWalletAddress() async => _hiveSource.getWalletAddress();
 
+  @override
   Future<void> saveWalletAddress(String address) async => _hiveSource.setWalletAddress(address);
 
+  @override
   Future<void> deleteWalletAddress() async => _hiveSource.deleteWalletAddressBox();
 
+  @override
   Future<KeyPair?> getWalletKeyPair() async {
     final result = await _hiveSource.getKeyPair();
     return result?.toDomain();
   }
 
+  @override
   Future<void> saveWalletKeyPair(KeyPair keyPair) async {
     final keyPairDto = keyPair.fromDomain();
     return _hiveSource.setKeyPair(keyPairDto);
   }
 
+  @override
   Future<void> deleteWalletKeyPair() async => _hiveSource.deleteKeyPairBox();
 
+  @override
   Future<List<String>> generateMnemonic() async {
     try {
       final mnemonic = await _core.generateMnemonic();
@@ -46,6 +55,7 @@ class WalletAuthRepositoryImpl implements WalletAuthRepository {
     }
   }
 
+  @override
   Future<KeyPair> generateKeyPairFromMnemonic(List<String> mnemonic) async {
     try {
       final jointMnemonic = mnemonic.join(" ");
@@ -59,6 +69,7 @@ class WalletAuthRepositoryImpl implements WalletAuthRepository {
     }
   }
 
+  @override
   Future<String> generateAddress({
     required ContractType contractType,
     required int wc,

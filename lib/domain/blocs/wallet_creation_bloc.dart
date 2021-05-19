@@ -43,7 +43,7 @@ class WalletCreationBloc extends Bloc<WalletCreationEvent, WalletCreationState> 
         await _repository.saveWalletKeyPair(keyPair);
         await _repository.saveWalletAddress(address);
 
-        _authBloc.add(AuthEvent.update(isAuthorized: true));
+        _authBloc.add(const AuthEvent.update(isAuthorized: true));
       }
     } on NativeException catch (err, st) {
       logger.e(err.info, err, st);

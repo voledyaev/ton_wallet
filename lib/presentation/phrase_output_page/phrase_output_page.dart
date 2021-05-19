@@ -12,7 +12,7 @@ class _PhraseOutputPageState extends State<PhraseOutputPage> {
   @override
   void initState() {
     super.initState();
-    context.read<WalletCreationBloc>().add(WalletCreationEvent.createWallet());
+    context.read<WalletCreationBloc>().add(const WalletCreationEvent.createWallet());
   }
 
   @override
@@ -27,9 +27,9 @@ class _PhraseOutputPageState extends State<PhraseOutputPage> {
                   child: Column(
                     children: [
                       buildInfoText(),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       buildPhrase(phraseGenerated.phrase),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       buildNextButton(phraseGenerated.phrase),
                     ],
                   ),
@@ -50,7 +50,7 @@ class _PhraseOutputPageState extends State<PhraseOutputPage> {
         ),
       );
 
-  CircularProgressIndicator buildLoader() => CircularProgressIndicator(
+  CircularProgressIndicator buildLoader() => const CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
       );
 
@@ -86,7 +86,7 @@ class _PhraseOutputPageState extends State<PhraseOutputPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: list.sublist(0, 6),
         ),
-        SizedBox(width: 24),
+        const SizedBox(width: 24),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: list.sublist(6, 12),
@@ -95,7 +95,7 @@ class _PhraseOutputPageState extends State<PhraseOutputPage> {
     );
   }
 
-  TextStyle buildTextStyle() => TextStyle(
+  TextStyle buildTextStyle() => const TextStyle(
         color: Colors.white,
         fontSize: 18,
       );

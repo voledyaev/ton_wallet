@@ -97,7 +97,7 @@ class _PhraseInputPageState extends State<PhraseInputPage> {
         decoration: buildInputDecoration(),
       );
 
-  InputDecoration buildInputDecoration() => InputDecoration(
+  InputDecoration buildInputDecoration() => const InputDecoration(
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
             color: Colors.white,
@@ -114,7 +114,7 @@ class _PhraseInputPageState extends State<PhraseInputPage> {
         ),
       );
 
-  CircularProgressIndicator buildLoader() => CircularProgressIndicator(
+  CircularProgressIndicator buildLoader() => const CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
       );
 
@@ -141,7 +141,7 @@ class _PhraseInputPageState extends State<PhraseInputPage> {
         ),
       );
 
-  TextStyle buildTextStyle() => TextStyle(
+  TextStyle buildTextStyle() => const TextStyle(
         color: Colors.white,
         fontSize: 18,
       );

@@ -16,13 +16,28 @@ class WalletInfoBloc extends Bloc<WalletInfoEvent, WalletInfoState> {
   final WalletInfoRepository _infoRepository;
   final String? _address;
   Account? _account;
+  Timer? _timer;
   List<Transaction> _transactions = [];
   final _take = 50;
 
   WalletInfoBloc(
     this._infoRepository,
     @factoryParam this._address,
-  ) : super(const WalletInfoState.initial());
+  ) : super(const WalletInfoState.initial()) {
+    add(const WalletInfoEvent.loadAccount());
+    add(const WalletInfoEvent.loadTransactions(fromStart: true));
+    _timer = Timer.periodic(
+      const Duration(seconds: 30),
+      (Timer timer) =>
+          this..add(const WalletInfoEvent.loadAccount())..add(const WalletInfoEvent.loadTransactions(fromStart: true)),
+    );
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
+  }
 
   @override
   Stream<WalletInfoState> mapEventToState(WalletInfoEvent event) async* {

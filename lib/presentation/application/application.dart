@@ -30,7 +30,7 @@ class _ApplicationState extends State<Application> {
   MaterialApp buildMaterialApp() => MaterialApp.router(
         title: 'TON Wallet',
         theme: ThemeData(
-          appBarTheme: AppBarTheme(
+          appBarTheme: const AppBarTheme(
             brightness: Brightness.dark,
           ),
           scaffoldBackgroundColor: Colors.blueAccent,

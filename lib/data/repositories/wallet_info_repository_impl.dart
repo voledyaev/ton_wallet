@@ -14,6 +14,7 @@ class WalletInfoRepositoryImpl implements WalletInfoRepository {
 
   WalletInfoRepositoryImpl(this._hiveSource) : _core = TonCore.instance();
 
+  @override
   Stream<Account> getAccountStream({
     required int wc,
     required String address,
@@ -41,6 +42,7 @@ class WalletInfoRepositoryImpl implements WalletInfoRepository {
     }
   }
 
+  @override
   Stream<List<Transaction>> getTransactionsStream({
     required int wc,
     required String address,
@@ -69,6 +71,7 @@ class WalletInfoRepositoryImpl implements WalletInfoRepository {
     }
   }
 
+  @override
   Future<Account> getAccount({
     required int wc,
     required String address,
