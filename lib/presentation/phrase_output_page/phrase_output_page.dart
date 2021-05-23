@@ -45,7 +45,7 @@ class _PhraseOutputPageState extends State<PhraseOutputPage> {
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Text(
           'Write this words somewhere safe and keep them from others. The words give access to your wallet and will not be shown later in app.',
-          style: buildTextStyle(),
+          style: Theme.of(context).textTheme.bodyText1,
           textAlign: TextAlign.center,
         ),
       );
@@ -63,7 +63,7 @@ class _PhraseOutputPageState extends State<PhraseOutputPage> {
           ),
           child: Text(
             'Next',
-            style: buildTextStyle(),
+            style: Theme.of(context).textTheme.bodyText1,
           ),
         ),
       );
@@ -74,7 +74,7 @@ class _PhraseOutputPageState extends State<PhraseOutputPage> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 '${phrase.indexOf(word) + 1}. $word',
-                style: buildTextStyle(),
+                style: Theme.of(context).textTheme.bodyText1,
               ),
             ))
         .toList();
@@ -94,9 +94,4 @@ class _PhraseOutputPageState extends State<PhraseOutputPage> {
       ],
     );
   }
-
-  TextStyle buildTextStyle() => const TextStyle(
-        color: Colors.white,
-        fontSize: 18,
-      );
 }

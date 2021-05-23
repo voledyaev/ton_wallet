@@ -22,9 +22,11 @@ class _PhraseInputPageState extends State<PhraseInputPage> {
               child: BlocListener<WalletCreationBloc, WalletCreationState>(
                 bloc: context.watch<WalletCreationBloc>(),
                 listener: (context, state) => state.maybeMap(
-                  error: (Error error) => ScaffoldMessenger.of(context).showSnackBar(
-                    buildSnackBar(error),
-                  ),
+                  error: (Error error) => ScaffoldMessenger.of(context)
+                    ..clearSnackBars()
+                    ..showSnackBar(
+                      buildSnackBar(error),
+                    ),
                   orElse: () => null,
                 ),
                 child: SingleChildScrollView(
@@ -74,12 +76,12 @@ class _PhraseInputPageState extends State<PhraseInputPage> {
         width: 30,
         child: Text(
           '${index + 1}. ',
-          style: buildTextStyle(),
+          style: Theme.of(context).textTheme.bodyText1,
         ),
       );
 
   TextFormField buildTextFormField(int index, BuildContext context) => TextFormField(
-        style: buildTextStyle(),
+        style: Theme.of(context).textTheme.bodyText1,
         autofocus: index == 0,
         controller: controllers[index],
         keyboardType: TextInputType.name,
@@ -109,7 +111,7 @@ class _PhraseInputPageState extends State<PhraseInputPage> {
         padding: const EdgeInsets.all(24),
         child: Text(
           'Enter your wallet words in fields below.',
-          style: buildTextStyle(),
+          style: Theme.of(context).textTheme.bodyText1,
           textAlign: TextAlign.center,
         ),
       );
@@ -135,14 +137,9 @@ class _PhraseInputPageState extends State<PhraseInputPage> {
             ),
             child: Text(
               'Next',
-              style: buildTextStyle(),
+              style: Theme.of(context).textTheme.bodyText1,
             ),
           ),
         ),
-      );
-
-  TextStyle buildTextStyle() => const TextStyle(
-        color: Colors.white,
-        fontSize: 18,
       );
 }

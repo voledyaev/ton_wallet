@@ -3,8 +3,8 @@ import 'package:auto_route/auto_route.dart';
 import '../loading_page/loading_page.dart';
 import '../phrase_input_page/phrase_input_page.dart';
 import '../phrase_output_page/phrase_output_page.dart';
+import '../wallet_address_scan_page/wallet_address_scan_page.dart';
 import '../wallet_creation_page/wallet_creation_page.dart';
-import '../wallet_deploy_page/wallet_deploy_page.dart';
 import '../wallet_info_page/wallet_info_page.dart';
 import '../wallet_overview_page/wallet_overview_page.dart';
 import '../wallet_receive_page/wallet_receive_page.dart';
@@ -33,8 +33,8 @@ import '../wallet_send_page/wallet_send_page.dart';
       children: [
         AutoRoute(page: WalletOverviewPage, initial: true),
         AutoRoute(page: WalletReceivePage),
-        AutoRoute(page: WalletDeployPage),
         AutoRoute(page: WalletSendPage),
+        AutoRoute<String>(page: WalletAddressScanPage),
       ],
     ),
   ],

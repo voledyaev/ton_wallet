@@ -38,7 +38,7 @@ class WalletSelectionPage extends StatelessWidget {
           ),
           child: Text(
             'Create Wallet',
-            style: buildTextStyle(),
+            style: Theme.of(context).textTheme.bodyText1,
           ),
         ),
       );
@@ -47,12 +47,7 @@ class WalletSelectionPage extends StatelessWidget {
         onPressed: () => context.router.push(const PhraseInputRoute()),
         child: Text(
           'Import Wallet',
-          style: buildTextStyle(),
+          style: Theme.of(context).textTheme.bodyText1,
         ),
-      );
-
-  TextStyle buildTextStyle() => const TextStyle(
-        fontSize: 18,
-        color: Colors.white,
       );
 }

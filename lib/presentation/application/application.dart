@@ -34,6 +34,16 @@ class _ApplicationState extends State<Application> {
             brightness: Brightness.dark,
           ),
           scaffoldBackgroundColor: Colors.blueAccent,
+          textTheme: Theme.of(context).textTheme.copyWith(
+                bodyText1: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+                bodyText2: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
         ),
         routerDelegate: _appRouter.delegate(),
         routeInformationParser: _appRouter.defaultRouteParser(),
