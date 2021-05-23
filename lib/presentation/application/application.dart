@@ -29,23 +29,25 @@ class _ApplicationState extends State<Application> {
 
   MaterialApp buildMaterialApp() => MaterialApp.router(
         title: 'TON Wallet',
-        theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            brightness: Brightness.dark,
-          ),
-          scaffoldBackgroundColor: Colors.blueAccent,
-          textTheme: Theme.of(context).textTheme.copyWith(
-                bodyText1: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-                bodyText2: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                ),
-              ),
-        ),
+        theme: buildThemeData(),
         routerDelegate: _appRouter.delegate(),
         routeInformationParser: _appRouter.defaultRouteParser(),
+      );
+
+  ThemeData buildThemeData() => ThemeData(
+        appBarTheme: const AppBarTheme(
+          brightness: Brightness.dark,
+        ),
+        scaffoldBackgroundColor: Colors.blueAccent,
+        textTheme: Theme.of(context).textTheme.copyWith(
+              bodyText1: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+              bodyText2: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+            ),
       );
 }

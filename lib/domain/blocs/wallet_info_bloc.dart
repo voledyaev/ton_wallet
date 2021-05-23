@@ -17,7 +17,7 @@ class WalletInfoBloc extends Bloc<WalletInfoEvent, WalletInfoState> {
   final String? _address;
   Account? _account;
   Timer? _timer;
-  List<Transaction> _transactions = [];
+  List<Transaction>? _transactions;
   final _take = 50;
 
   WalletInfoBloc(
@@ -40,9 +40,20 @@ class WalletInfoBloc extends Bloc<WalletInfoEvent, WalletInfoState> {
   }
 
   @override
+  Stream<Transition<WalletInfoEvent, WalletInfoState>> transformEvents(
+    Stream<WalletInfoEvent> events,
+    TransitionFunction<WalletInfoEvent, WalletInfoState> transitionFn,
+  ) {
+    return super.transformEvents(
+      events.distinct(),
+      transitionFn,
+    );
+  }
+
+  @override
   Stream<WalletInfoState> mapEventToState(WalletInfoEvent event) async* {
-    try {
-      if (event is LoadAccount) {
+    if (event is LoadAccount) {
+      try {
         final accountStream = _infoRepository.getAccountStream(
           wc: kDefaultWc,
           address: _address!,
@@ -57,37 +68,53 @@ class WalletInfoBloc extends Bloc<WalletInfoEvent, WalletInfoState> {
             transactions: _transactions,
           );
         }
-      } else if (event is LoadTransactions) {
-        int? lastTransactionLt;
-
-        if (event.fromStart) {
-          lastTransactionLt = _account?.lastTransLt;
+      } on NativeException catch (err, st) {
+        if (err.info != "Account not found") {
+          logger.e(err.info, err, st);
+          yield WalletInfoState.error(err.info);
         } else {
-          lastTransactionLt = _transactions.isNotEmpty ? _transactions.last.prevTransLt : null;
-        }
-
-        if (lastTransactionLt != null) {
-          final transactionsStream = _infoRepository.getTransactionsStream(
-            wc: kDefaultWc,
-            address: _address!,
-            lastTransactionLt: lastTransactionLt,
-            limit: _take,
+          yield WalletInfoState.ready(
+            account: _account,
+            transactions: _transactions,
           );
-
-          await for (final transactions in transactionsStream) {
-            yield const WalletInfoState.loading();
-
-            _transactions = transactions;
-            yield WalletInfoState.ready(
-              account: _account,
-              transactions: _transactions,
-            );
-          }
         }
       }
-    } on NativeException catch (err, st) {
-      logger.e(err.info, err, st);
-      yield WalletInfoState.error(err.info);
+    } else if (event is LoadTransactions) {
+      int? lastTransactionLt;
+
+      if (event.fromStart) {
+        lastTransactionLt = _account?.lastTransLt;
+      } else {
+        if (_transactions != null) {
+          lastTransactionLt = _transactions!.isNotEmpty ? _transactions!.last.prevTransLt : null;
+        }
+      }
+
+      if (lastTransactionLt != null) {
+        final transactionsStream = _infoRepository.getTransactionsStream(
+          wc: kDefaultWc,
+          address: _address!,
+          lastTransactionLt: lastTransactionLt,
+          limit: _take,
+        );
+
+        await for (final transactions in transactionsStream) {
+          yield const WalletInfoState.loading();
+
+          _transactions = transactions;
+          yield WalletInfoState.ready(
+            account: _account,
+            transactions: _transactions,
+          );
+        }
+      } else {
+        _transactions ??= [];
+
+        yield WalletInfoState.ready(
+          account: _account,
+          transactions: _transactions,
+        );
+      }
     }
   }
 }
@@ -109,6 +136,6 @@ class WalletInfoState with _$WalletInfoState {
 
   const factory WalletInfoState.ready({
     Account? account,
-    required List<Transaction> transactions,
+    List<Transaction>? transactions,
   }) = Ready;
 }

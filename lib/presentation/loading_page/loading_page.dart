@@ -8,23 +8,27 @@ class LoadingPage extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'TON Wallet',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                  ),
-                ),
+                buildTitle(),
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 2,
-                  child: const LinearProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                ),
+                buildLoader(context),
               ],
             ),
           ),
+        ),
+      );
+
+  Text buildTitle() => const Text(
+        'TON Wallet',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 26,
+        ),
+      );
+
+  SizedBox buildLoader(BuildContext context) => SizedBox(
+        width: MediaQuery.of(context).size.width / 2,
+        child: const LinearProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
         ),
       );
 }

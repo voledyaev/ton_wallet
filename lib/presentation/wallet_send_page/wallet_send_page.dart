@@ -37,6 +37,7 @@ class _WalletSendPageState extends State<WalletSendPage> {
   BlocListener<WalletMessagingBloc, WalletMessagingState> buildBlocListener() =>
       BlocListener<WalletMessagingBloc, WalletMessagingState>(
         bloc: widget.messagingBloc,
+        listenWhen: (_, __) => ModalRoute.of(context) != null && ModalRoute.of(context)!.isCurrent,
         listener: (context, state) => state.maybeMap(
           error: (Error error) => showSnackBar(error.message),
           messagePrepared: (MessagePrepared messagePrepared) => showSubmitDialog(

@@ -48,8 +48,36 @@ class _WalletOverviewPageState extends State<WalletOverviewPage> {
         appBar: AppBar(
           title: const Text('Your Wallet'),
           bottom: buildBottom(),
+          actions: [
+            buildLogoutButton(context),
+          ],
         ),
-        body: buildBody(),
+        body: buildBlocListener(),
+      );
+
+  IconButton buildLogoutButton(BuildContext context) => IconButton(
+        icon: const Icon(Icons.logout),
+        onPressed: () => showGeneralDialog(
+          context: context,
+          pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) =>
+              AlertDialog(
+            title: const Text('Confirm'),
+            content: const Text('Do you want to log out from your wallet?'),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.read<AuthBloc>().add(const AuthEvent.update(isAuthorized: false));
+                },
+                child: const Text('Yes'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('No'),
+              ),
+            ],
+          ),
+        ),
       );
 
   PreferredSize buildBottom() => PreferredSize(
@@ -65,15 +93,17 @@ class _WalletOverviewPageState extends State<WalletOverviewPage> {
                     buildEntry(name: 'Address:', value: address!),
                     const SizedBox(height: 10),
                   ],
-                  if (ready.account != null && ready.account!.accTypeName.isNotEmpty) ...[
-                    buildEntry(name: 'Type:', value: ready.account!.accTypeName),
-                    const SizedBox(height: 10),
-                  ],
+                  buildEntry(
+                      name: 'Type:',
+                      value: ready.account != null && ready.account!.accTypeName.isNotEmpty
+                          ? ready.account!.accTypeName
+                          : 'Not exist'),
+                  const SizedBox(height: 10),
                   if (ready.account != null && ready.account!.balance != null) ...[
                     buildEntry(name: 'Balance:', value: (ready.account!.balance! / 1e9).toStringAsFixed(9)),
                     const SizedBox(height: 10),
                   ],
-                  buildButtons(),
+                  buildButtons(ready),
                 ],
               ),
             ),
@@ -82,38 +112,151 @@ class _WalletOverviewPageState extends State<WalletOverviewPage> {
         ),
       );
 
-  Row buildButtons() => Row(
+  Row buildButtons(Ready ready) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          if (ready.account != null) ready.account!.accTypeName == 'Active' ? buildSendButton() : buildDeployButton(),
           buildButton(
-            text: 'Send',
-            onPressed: () => context.router.push(WalletSendRoute(messagingBloc: messagingBloc!)),
-          ),
-          buildButton(
-            text: 'Receive',
             onPressed: () => context.router.push(WalletReceiveRoute(address: address!)),
+            child: Text(
+              'Receive',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
           ),
         ],
       );
 
+  ElevatedButton buildSendButton() => buildButton(
+        onPressed: () => context.router.push(WalletSendRoute(messagingBloc: messagingBloc!)),
+        child: Text(
+          'Send',
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      );
+
+  BlocBuilder<WalletMessagingBloc, WalletMessagingState> buildDeployButton() =>
+      BlocBuilder<WalletMessagingBloc, WalletMessagingState>(
+        bloc: messagingBloc,
+        builder: (context, state) => state.maybeMap(
+          loading: (loading) => buildButton(
+            child: const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                strokeWidth: 2,
+              ),
+            ),
+          ),
+          orElse: () => buildButton(
+            onPressed: () => messagingBloc?.add(const WalletMessagingEvent.generateDeployMessage()),
+            child: Text(
+              'Deploy',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+        ),
+      );
+
+  BlocListener<WalletMessagingBloc, WalletMessagingState> buildBlocListener() =>
+      BlocListener<WalletMessagingBloc, WalletMessagingState>(
+        bloc: messagingBloc,
+        listenWhen: (_, __) => ModalRoute.of(context) != null && ModalRoute.of(context)!.isCurrent,
+        listener: (BuildContext context, WalletMessagingState state) => state.maybeMap(
+          messagePrepared: (MessagePrepared messagePrepared) => showSubmitDialog(
+            title: 'Message prepared',
+            content: 'Estimated fees: ${(messagePrepared.fees / 1e9).toStringAsFixed(9)}',
+            onSendPressed: (BuildContext context) {
+              messagingBloc?.add(
+                WalletMessagingEvent.sendMessage(
+                  message: messagePrepared.message,
+                ),
+              );
+              Navigator.of(context).pop();
+            },
+            onCancelPressed: (BuildContext context) => Navigator.of(context).pop(),
+          ),
+          messageSent: (MessageSent messageSent) =>
+              showSnackBar('Message sent, result fees: ${(messageSent.fees / 1e9).toStringAsFixed(9)}'),
+          orElse: () => null,
+        ),
+        child: buildBody(),
+      );
+
+  void showSnackBar(String message) => ScaffoldMessenger.of(context)
+    ..clearSnackBars()
+    ..showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+
+  Future<void> showSubmitDialog({
+    required String title,
+    required String content,
+    required Function(BuildContext context) onSendPressed,
+    required Function(BuildContext context) onCancelPressed,
+  }) async {
+    FocusScope.of(context).unfocus();
+    showGeneralDialog(
+      context: context,
+      pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) =>
+          AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          ElevatedButton(
+            onPressed: () => onSendPressed(context),
+            child: const Text('Send'),
+          ),
+          ElevatedButton(
+            onPressed: () => onCancelPressed(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
   BlocBuilder<WalletInfoBloc, WalletInfoState> buildBody() => BlocBuilder<WalletInfoBloc, WalletInfoState>(
         bloc: infoBloc,
         builder: (BuildContext context, WalletInfoState state) => state.maybeMap(
-          ready: (Ready ready) => AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: ready.transactions.isNotEmpty
-                ? ListView.builder(
-                    controller: scrollController,
-                    itemCount: ready.transactions.length,
-                    itemBuilder: (BuildContext context, int index) => itemBuilder(
-                      context: context,
-                      index: index,
-                      transactions: ready.transactions,
-                    ),
-                  )
-                : buildLoader(),
-          ),
+          ready: (Ready ready) => ready.transactions != null
+              ? AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: ready.transactions!.isNotEmpty ? buildList(ready) : buildPlaceholder(context),
+                )
+              : buildLoader(),
           orElse: () => buildLoader(),
+        ),
+      );
+
+  NotificationListener<ScrollUpdateNotification> buildList(Ready ready) =>
+      NotificationListener<ScrollUpdateNotification>(
+        onNotification: (ScrollUpdateNotification notification) {
+          if (notification.metrics.pixels > notification.metrics.maxScrollExtent) {
+            infoBloc?.add(const WalletInfoEvent.loadTransactions(fromStart: false));
+          }
+          return true;
+        },
+        child: ready.transactions != null
+            ? ListView.builder(
+                controller: scrollController,
+                itemCount: ready.transactions!.length,
+                itemBuilder: (BuildContext context, int index) => itemBuilder(
+                  context: context,
+                  index: index,
+                  transactions: ready.transactions!,
+                ),
+              )
+            : buildLoader(),
+      );
+
+  Center buildPlaceholder(BuildContext context) => Center(
+        child: Text(
+          'No transactions found',
+          style: Theme.of(context).textTheme.bodyText1,
         ),
       );
 
@@ -203,8 +346,8 @@ class _WalletOverviewPageState extends State<WalletOverviewPage> {
       );
 
   ElevatedButton buildButton({
-    required String text,
-    required void Function() onPressed,
+    required Widget child,
+    void Function()? onPressed,
   }) =>
       ElevatedButton(
         style: ButtonStyle(
@@ -216,10 +359,7 @@ class _WalletOverviewPageState extends State<WalletOverviewPage> {
             vertical: 10,
             horizontal: 20,
           ),
-          child: Text(
-            text,
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
+          child: child,
         ),
       );
 }
