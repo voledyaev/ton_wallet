@@ -8,6 +8,8 @@ import '../../domain/blocs/auth_bloc.dart';
 import '../../domain/blocs/wallet_info_bloc.dart';
 import '../../domain/blocs/wallet_messaging_bloc.dart';
 import '../../injection.dart';
+import '../design/show_snack_bar.dart';
+import '../design/show_submit_dialog.dart';
 import '../router/router.gr.dart';
 import 'widgets/transaction_card.dart';
 
@@ -164,6 +166,7 @@ class _WalletOverviewPageState extends State<WalletOverviewPage> {
         listenWhen: (_, __) => ModalRoute.of(context) != null && ModalRoute.of(context)!.isCurrent,
         listener: (BuildContext context, WalletMessagingState state) => state.maybeMap(
           messagePrepared: (MessagePrepared messagePrepared) => showSubmitDialog(
+            context: context,
             title: 'Message prepared',
             content: 'Estimated fees: ${(messagePrepared.fees / 1e9).toStringAsFixed(9)}',
             onSendPressed: (BuildContext context) {
@@ -176,48 +179,14 @@ class _WalletOverviewPageState extends State<WalletOverviewPage> {
             },
             onCancelPressed: (BuildContext context) => Navigator.of(context).pop(),
           ),
-          messageSent: (MessageSent messageSent) =>
-              showSnackBar('Message sent, result fees: ${(messageSent.fees / 1e9).toStringAsFixed(9)}'),
+          messageSent: (MessageSent messageSent) => showSnackBar(
+            context: context,
+            message: 'Message sent, result fees: ${(messageSent.fees / 1e9).toStringAsFixed(9)}',
+          ),
           orElse: () => null,
         ),
         child: buildBody(),
       );
-
-  void showSnackBar(String message) => ScaffoldMessenger.of(context)
-    ..clearSnackBars()
-    ..showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-
-  Future<void> showSubmitDialog({
-    required String title,
-    required String content,
-    required Function(BuildContext context) onSendPressed,
-    required Function(BuildContext context) onCancelPressed,
-  }) async {
-    FocusScope.of(context).unfocus();
-    showGeneralDialog(
-      context: context,
-      pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) =>
-          AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          ElevatedButton(
-            onPressed: () => onSendPressed(context),
-            child: const Text('Send'),
-          ),
-          ElevatedButton(
-            onPressed: () => onCancelPressed(context),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
-    );
-  }
 
   BlocBuilder<WalletInfoBloc, WalletInfoState> buildBody() => BlocBuilder<WalletInfoBloc, WalletInfoState>(
         bloc: infoBloc,

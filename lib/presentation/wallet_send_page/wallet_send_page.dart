@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/blocs/wallet_messaging_bloc.dart';
+import '../design/show_snack_bar.dart';
+import '../design/show_submit_dialog.dart';
 import '../router/router.gr.dart';
 
 class WalletSendPage extends StatefulWidget {
@@ -39,8 +41,12 @@ class _WalletSendPageState extends State<WalletSendPage> {
         bloc: widget.messagingBloc,
         listenWhen: (_, __) => ModalRoute.of(context) != null && ModalRoute.of(context)!.isCurrent,
         listener: (context, state) => state.maybeMap(
-          error: (Error error) => showSnackBar(error.message),
+          error: (Error error) => showSnackBar(
+            context: context,
+            message: error.message,
+          ),
           messagePrepared: (MessagePrepared messagePrepared) => showSubmitDialog(
+            context: context,
             title: 'Message prepared',
             content: 'Estimated fees: ${(messagePrepared.fees / 1e9).toStringAsFixed(9)}',
             onSendPressed: (BuildContext context) {
@@ -53,8 +59,10 @@ class _WalletSendPageState extends State<WalletSendPage> {
             },
             onCancelPressed: (BuildContext context) => Navigator.of(context).pop(),
           ),
-          messageSent: (MessageSent messageSent) =>
-              showSnackBar('Message sent, result fees: ${(messageSent.fees / 1e9).toStringAsFixed(9)}'),
+          messageSent: (MessageSent messageSent) => showSnackBar(
+            context: context,
+            message: 'Message sent, result fees: ${(messageSent.fees / 1e9).toStringAsFixed(9)}',
+          ),
           orElse: () => null,
         ),
         child: buildBody(),
@@ -91,42 +99,6 @@ class _WalletSendPageState extends State<WalletSendPage> {
           ),
         ),
       );
-
-  void showSnackBar(String message) => ScaffoldMessenger.of(context)
-    ..clearSnackBars()
-    ..showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-
-  Future<void> showSubmitDialog({
-    required String title,
-    required String content,
-    required Function(BuildContext context) onSendPressed,
-    required Function(BuildContext context) onCancelPressed,
-  }) async {
-    FocusScope.of(context).unfocus();
-    showGeneralDialog(
-      context: context,
-      pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) =>
-          AlertDialog(
-        title: Text(title),
-        content: Text(content),
-        actions: [
-          ElevatedButton(
-            onPressed: () => onSendPressed(context),
-            child: const Text('Send'),
-          ),
-          ElevatedButton(
-            onPressed: () => onCancelPressed(context),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
-    );
-  }
 
   Text buildText() => Text(
         'Enter destination address and value in tokens to send',
